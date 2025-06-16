@@ -1,0 +1,35 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /
+
+spring:
+  ai:
+    # OpenAI/DeepSeek 配置
+    openai:
+      api-key: ${DEEPSEEK_API_KEY:sk-5b7957a0c44c4532a27cac4276a63178}
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+          max-tokens: 2048
+          top-p: 0.9
+          frequency-penalty: 0.1
+          presence-penalty: 0.1
+
+    # MCP 服务器配置
+    mcp:
+      # MCP 客户端配置（如果需要）
+      client:
+        toolcallback:
+          enabled: true
+        sse:
+          connections:
+            server1:
+              url: http://localhost:8080
+#              sse-endpoint: /tools/mcp/sse
+
+        enabled: true
+
+

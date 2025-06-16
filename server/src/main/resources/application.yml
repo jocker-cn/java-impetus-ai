@@ -1,0 +1,50 @@
+server:
+  port: 8080
+
+spring:
+  ai:
+    mcp:
+      server:
+        # 基础配置
+        enabled: true
+        stdio: false
+        name: mcp-server
+        version: 1.0.0
+        instructions: 基于 DeepSeek 的 AI 助手服务器，支持智能对话、工具调用和资源管理
+        type: SYNC
+
+        # URL 配置
+#        base-url: /tools
+#        sse-endpoint: /mcp/sse
+#        sse-message-endpoint: /mcp/message
+
+        # 功能能力配置
+        capabilities:
+          resource: true
+          tool: true
+          prompt: true
+          completion: true
+
+        # 通知配置
+        resource-change-notification: true
+        prompt-change-notification: true
+        tool-change-notification: true
+
+        # 工具响应类型配置
+        tool-response-mime-type:
+          generateImage: image/png
+          generateDocument: application/pdf
+          analyzeData: application/json
+          processText: text/plain
+          generateCode: text/x-java-source
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # 暴露所有端点
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+
