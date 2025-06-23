@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.Query;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
@@ -12,6 +14,7 @@ import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,6 +22,7 @@ import java.util.List;
 /**
  * MCP 工具：检索知识库并返回最相关片段（JSON 数组）
  */
+@Slf4j
 @Component                       // 放在 MCP-Server 项目里
 public class RetrieveKbTool implements ToolCallback {
 
@@ -32,7 +36,7 @@ public class RetrieveKbTool implements ToolCallback {
     @Override
     public ToolDefinition getToolDefinition() {
 
-        // ❶ 直接写 JSON-Schema 字符串（符合 OpenAI function 格式）
+        // 直接写 JSON-Schema 字符串（符合 OpenAI function 格式）
         String inputSchema = """
                 {
                   "type": "object",
@@ -65,7 +69,7 @@ public class RetrieveKbTool implements ToolCallback {
         try {
             JsonNode root = mapper.readTree(toolInput);
             String question = root.path("question").asText("").trim();
-            int topK = root.path("topK").asInt(4);
+            int topK = root.path("topK").asInt(8);
 
             if (question.isEmpty()) {
                 return "字段 question 不能为空！";
@@ -96,7 +100,15 @@ public class RetrieveKbTool implements ToolCallback {
 
         } catch (Exception e) {
             // MCP 规范：返回非空字符串即可传递错误信息给模型
+            log.error("工具执行失败", e);
             return "工具执行失败: " + e.getMessage();
         }
+    }
+
+    @NonNull
+    @Override
+    public String call(@NonNull String toolInput,
+                       @Nullable ToolContext toolContext) {
+        return call(toolInput);   // 不使用 context，直接委托
     }
 }
