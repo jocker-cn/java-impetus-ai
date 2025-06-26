@@ -33,6 +33,7 @@ spring:
       redis:
         prefix: "default:"
         initialize-schema: true
+        index-name: default-index
     mcp:
       server:
         # 基础配置

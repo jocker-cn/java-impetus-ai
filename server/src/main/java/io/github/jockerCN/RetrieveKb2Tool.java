@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Slf4j
 @Component                       // 放在 MCP-Server 项目里
-public class RetrieveKbTool implements ToolCallback {
+public class RetrieveKb2Tool implements ToolCallback {
 
     @Autowired
     private VectorStore vectorStore;      // RedisVectorStore 已注入
@@ -43,7 +43,7 @@ public class RetrieveKbTool implements ToolCallback {
                   "properties": {
                    "biz": {
                         "type": "string",
-                        "description": "知识库代号，必须是: 狗屁王企业"
+                        "description": "知识库代号，必须是: 王五企业"
                       },
                     "question": {
                       "type": "string",
@@ -59,8 +59,8 @@ public class RetrieveKbTool implements ToolCallback {
                 """;
 
         return ToolDefinition.builder()
-                .name("retrieve_knowledge_gpw")
-                .description("检索狗屁王企业知识库，返回最相关的文本片段列表")
+                .name("retrieve_knowledge_ww")
+                .description("检索王五企业知识库，返回最相关的文本片段列表")
                 .inputSchema(inputSchema)
                 .build();
     }
@@ -75,9 +75,8 @@ public class RetrieveKbTool implements ToolCallback {
             String question = root.path("question").asText("").trim();
             String biz = root.path("biz").asText("").trim();
             int topK = root.path("topK").asInt(8);
-
-            if (!biz.contains("狗屁王")) {
-                return "该工具只能查询狗屁王企业信息";
+            if (!biz.contains("王五")) {
+                return "该工具只能查询王五企业信息";
             }
             if (question.isEmpty()) {
                 return "字段 question 不能为空！";
